@@ -683,8 +683,8 @@ static int hap_http_handle_set_char(jparse_ctx_t *jctx, char *outbuf, int buf_si
             if (hc->permission & HAP_CHAR_PERM_EV) {
                 int index = hap_get_ctrl_session_index(session);
                 hap_char_manage_notification((hap_char_t *)hc, index, ev);
-                ESP_MFI_DEBUG(ESP_MFI_DEBUG_INFO, "Events %s for aid=%d iid=%d",
-                        ev ? "Enabled" : "Disabled", aid, iid);
+                //ESP_MFI_DEBUG(ESP_MFI_DEBUG_INFO, "Events %s for aid=%d iid=%d",
+                //        ev ? "Enabled" : "Disabled", aid, iid);
             } else {
 				hap_set_char_report_status(&include_status, &jstr,
 						aid, iid, HAP_STATUS_NO_NOTIF);

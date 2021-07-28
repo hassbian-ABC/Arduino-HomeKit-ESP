@@ -553,6 +553,9 @@ hap_serv_t *hap_serv_valve_create(uint8_t active, uint8_t in_use, uint8_t valve_
  */
 hap_serv_t *hap_serv_faucet_create(uint8_t active);
 
+
+hap_serv_t *hap_serv_wattage_create(float curr_watts);
+
 #ifdef __cplusplus
 }
 #endif

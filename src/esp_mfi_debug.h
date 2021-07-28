@@ -125,17 +125,29 @@ uint32_t esp_mfi_get_debug_level(uint32_t level, uint32_t *color);
     }*/
 
 #define ESP_MFI_DEBUG(l, fmt, ...)                                                          \
-    {                                                                                       \
-            printf("[%7lu] " fmt "\n", ((unsigned long) (esp_timer_get_time() / 1000ULL)), ##__VA_ARGS__);                              \
+    if (on_homekit_log)                           \
+    {                                             \
+        on_homekit_log(fmt, ##__VA_ARGS__); \
+    }                                             \
+    else                                          \
+    {                                             \
+        printf("[%7lu] " fmt "\n", ((unsigned long) (esp_timer_get_time() / 1000ULL)), ##__VA_ARGS__);                              \
     }
 #define ESP_MFI_DEBUG_INTR(l, fmt, ...)                                                          \
-    {                                                                                       \
-        	printf("[%7lu] " fmt "\n", ((unsigned long) (esp_timer_get_time() / 1000ULL)), ##__VA_ARGS__);                           \
+    if (on_homekit_log)                           \
+    {                                             \
+        on_homekit_log(fmt, ##__VA_ARGS__); \
+    }                                             \
+    else                                          \
+    {                                                                                          \
+        printf("[%7lu] " fmt "\n", ((unsigned long) (esp_timer_get_time() / 1000ULL)), ##__VA_ARGS__);                           \
     }
 #else /* ESP_MFI_DEBUG_ENABLE */
 #define ESP_MFI_DEBUG(l, fmt, ...)
 #define ESP_MFI_DEBUG_INTR(l, fmt, ...)
 #endif /* ESP_MFI_DEBUG_ENABLE */
+
+extern void (*on_homekit_log)(const char * formatP, ...);
 
 /**
  * @bref if the signal is false(0) do something depended on configuration

@@ -39,6 +39,21 @@ hap_char_t *hap_char_brightness_create(int brightness)
     return hc;
 }
 
+/* Char: Brightness */
+hap_char_t *hap_char_wattage_create(float watts)
+{
+  hap_char_t *hc = hap_char_float_create(HAP_CHAR_UUID_CURRENT_AMBIENT_LIGHT_LEVEL,
+                                         HAP_CHAR_PERM_PR | HAP_CHAR_PERM_PW | HAP_CHAR_PERM_EV, watts);
+    if (!hc) {
+        return NULL;
+    }
+
+    hap_char_float_set_constraints(hc, -10000.0, 10000.0, 1);
+    hap_char_add_unit(hc, HAP_CHAR_UNIT_LUX);
+
+    return hc;
+}
+
 /* Char: Cooling Threshold Temperature */
 hap_char_t *hap_char_cooling_threshold_temperature_create(float cooling_threshold_temp)
 {

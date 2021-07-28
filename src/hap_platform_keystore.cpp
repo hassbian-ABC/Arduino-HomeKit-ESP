@@ -21,24 +21,170 @@
  * CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
  *
  */
+
+
 #include <esp_log.h>
 #include <nvs_flash.h>
 #include <string.h>
+#include <FS.h>
 
 #define HAP_PLATFORM_DEF_NVS_PARTITION          "nvs"
 #define HAP_PLATFORM_DEF_FACTORY_NVS_PARTITION  "factory_nvs"
 
+extern "C" {
+
 static const char *TAG = "hap_platform_keystore";
 
-char * hap_platform_keystore_get_nvs_partition_name()
-{
+const char * hap_platform_keystore_get_nvs_partition_name() {
     return HAP_PLATFORM_DEF_NVS_PARTITION;
 }
 
-char * hap_platform_keystore_get_factory_nvs_partition_name()
-{
+const char * hap_platform_keystore_get_factory_nvs_partition_name() {
     return HAP_PLATFORM_DEF_FACTORY_NVS_PARTITION;
 }
+
+#define HAP_USE_LITTLEFS
+
+#ifdef HAP_USE_LITTLEFS
+
+#include <LITTLEFS.h>
+#include <FileSystem.h>
+
+int hap_platform_keystore_init_partition(const char *part_name, bool read_only) {
+  return 0;
+}
+
+int hap_platform_keystore_get(const char *part_name, const char *name_space, const char *key, uint8_t *val, size_t *val_size) {
+  char path[48];
+  strcpy(path, "/");
+  strcat(path, part_name);
+
+  File fp = FileSystem::getFs()->open(path, "r");
+  if (!fp) {
+    FileSystem::getFs()->mkdir(path);
+    return -1;
+  }
+  fp.close();
+
+  strcat(path, "/");
+  strcat(path, name_space);
+  fp = FileSystem::getFs()->open(path, "r");
+  if (!fp) {
+    FileSystem::getFs()->mkdir(path);
+    return -1;
+  }
+  fp.close();
+
+  strcat(path, "/");
+  strcat(path, key);
+  fp = FileSystem::getFs()->open(path, "r");
+  if (fp) {
+    fp.read(val, *val_size);
+    fp.close();
+  } else {
+    *val_size = 0;
+    return -1;
+  }
+  return 0;
+}
+
+int hap_platform_keystore_set(const char *part_name, const char *name_space, const char *key, const uint8_t *val, const size_t val_len) {
+  char path[48];
+  strcpy(path, "/");
+  strcat(path, part_name);
+
+  File fp = FileSystem::getFs()->open(path, "r");
+  if (!fp) {
+    FileSystem::getFs()->mkdir(path);
+  }
+  fp.close();
+
+  strcat(path, "/");
+  strcat(path, name_space);
+  fp = FileSystem::getFs()->open(path, "r");
+  if (!fp) {
+    FileSystem::getFs()->mkdir(path);
+  }
+  fp.close();
+
+  strcat(path, "/");
+  strcat(path, key);
+  fp = FileSystem::getFs()->open(path, "w");
+  if (fp) {
+    fp.write(val, val_len);
+    fp.close();
+  } else {
+    return -1;
+  }
+  return 0;
+}
+
+int hap_platform_keystore_delete(const char *part_name, const char *name_space, const char *key) {
+  char path[48];
+  strcpy(path, "/");
+  strcat(path, part_name);
+  strcat(path, "/");
+  strcat(path, name_space);
+  strcat(path, "/");
+  strcat(path, key);
+  FileSystem::getFs()->remove(path);
+  return 0;
+}
+
+// should
+int hap_platform_keystore_delete_namespace(const char *part_name, const char *name_space) {
+  char path[48];
+  strcpy(path, "/");
+  strcat(path, part_name);
+  strcat(path, "/");
+  strcat(path, name_space);
+  File fp = FileSystem::getFs()->open(path, "r");
+  if (fp.isDirectory()) {
+    while (true) {
+      File entry = fp.openNextFile();
+      if (!entry) break;
+      char p[48];
+      strcpy(p,entry.name());
+      entry.close();
+      FileSystem::getFs()->remove(p);
+    }
+  }
+  return 0;
+}
+
+// last resort only
+int hap_platfrom_keystore_erase_partition(const char *part_name) {
+char path[48];
+strcpy(path, "/");
+strcat(path, part_name);
+File fp = FileSystem::getFs()->open(path, "r");
+if (fp.isDirectory()) {
+  while (true) {
+    File entry = fp.openNextFile();
+    if (!entry) break;
+    const char *ep = entry.name();
+    if (*ep=='/') ep++;
+    char *lcp = strrchr(ep,'/');
+    if (lcp) {
+      ep = lcp + 1;
+    }
+    char p[48];
+    strcpy(p,entry.name());
+    if (entry.isDirectory()) {
+      hap_platform_keystore_delete_namespace(part_name, ep);
+      entry.close();
+      FileSystem::getFs()->rmdir(p);
+    } else {
+      entry.close();
+      FileSystem::getFs()->remove(p);
+    }
+
+  }
+}
+  return 0;
+}
+
+#else
 
 #ifdef CONFIG_NVS_ENCRYPTION
 int hap_platform_keystore_init_partition(const char *part_name, bool read_only)
@@ -184,4 +330,7 @@ int hap_platfrom_keystore_erase_partition(const char *part_name)
         return 0;
     }
     return -1;
+}
+#endif // USE_LITTLEFS
+
 }

@@ -40,6 +40,7 @@
 #endif /* CONFIG_MFI_DEBUG_LEVEL_INIT */
 
 static uint32_t mfi_debug_level = MFI_DEBUG_LEVEL_INIT;
+void (*on_homekit_log)(const char * formatP, ...);
 
 /**
  * @bref set the MFI debugging level

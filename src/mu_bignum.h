@@ -196,16 +196,16 @@ static inline int mu_bn_a_mul_b_mod_c(mu_bn_t *result, mu_bn_t *a, mu_bn_t *b, m
 
 static inline int mu_bn_a_exp_b_mod_c(mu_bn_t *result, mu_bn_t *a, mu_bn_t *b, mu_bn_t *c, mu_bn_ctx_t *ctx)
 {
-    //return mbedtls_mpi_exp_mod(result, a, b, c, (mu_bn_t *) ctx);
-	// wangbin changed
-	printf("esp_mpi_exp_mod\n");
-	return esp_mpi_exp_mod(result, a, b, c, (mu_bn_t *) ctx);
+#if CONFIG_IDF_TARGET_ESP32S2 || CONFIG_IDF_TARGET_ESP32C3
+    return mbedtls_mpi_exp_mod(result, a, b, c, (mu_bn_t *) ctx);
+#else
+    return esp_mpi_exp_mod(result, a, b, c, (mu_bn_t *) ctx);
+#endif
 }
 
 
 static inline int mu_bn_a_mul_b_mod_c(mu_bn_t *result, mu_bn_t *a, mu_bn_t *b, mu_bn_t *c, mu_bn_ctx_t *ctx)
 {
-	printf("esp_mpi_mul_mpi_mod\n");
     return esp_mpi_mul_mpi_mod(result, a, b, c);
 }
 #endif /* !CONFIG_IDF_TARGET_ESP8266 */
