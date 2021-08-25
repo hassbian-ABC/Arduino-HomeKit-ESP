@@ -144,6 +144,7 @@ cleanup:
 
 
 
+#ifndef CONFIG_IDF_TARGET_ESP32C3
 
 /* Z = (X * Y) mod M
 
@@ -185,6 +186,7 @@ cleanup:
 
     return ret;
 }
+#endif
 
 #if defined(MBEDTLS_MPI_EXP_MOD_ALT)
 

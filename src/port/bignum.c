@@ -1,3 +1,4 @@
+#if CONFIG_IDF_TARGET_ESP32
 /**
  * \brief  Multi-precision integer library, ESP-IDF hardware accelerated parts
  *
@@ -277,3 +278,4 @@ void esp_mpi_mult_mpi_failover_mod_mult_hw_op(const mbedtls_mpi *X, const mbedtl
     start_op(RSA_MULT_START_REG);
 
 }
+#endif

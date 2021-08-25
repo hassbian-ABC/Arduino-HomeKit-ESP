@@ -10,7 +10,7 @@
    exponentiation instead.
 */
 
-#define CONFIG_IDF_TARGET_ESP32  1
+//#define CONFIG_IDF_TARGET_ESP32  1
 
 #if CONFIG_IDF_TARGET_ESP32
 #define ESP_MPI_USE_MONT_EXP
