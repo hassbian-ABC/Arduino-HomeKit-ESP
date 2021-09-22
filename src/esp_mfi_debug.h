@@ -127,7 +127,7 @@ uint32_t esp_mfi_get_debug_level(uint32_t level, uint32_t *color);
 #define ESP_MFI_DEBUG(l, fmt, ...)                                                          \
     if (on_homekit_log)                           \
     {                                             \
-        on_homekit_log(fmt, ##__VA_ARGS__); \
+        on_homekit_log("[Homekit]>>> "fmt, ##__VA_ARGS__); \
     }                                             \
     else                                          \
     {                                             \
@@ -136,7 +136,7 @@ uint32_t esp_mfi_get_debug_level(uint32_t level, uint32_t *color);
 #define ESP_MFI_DEBUG_INTR(l, fmt, ...)                                                          \
     if (on_homekit_log)                           \
     {                                             \
-        on_homekit_log(fmt, ##__VA_ARGS__); \
+        on_homekit_log("[Homekit]>>> "fmt, ##__VA_ARGS__); \
     }                                             \
     else                                          \
     {                                                                                          \
