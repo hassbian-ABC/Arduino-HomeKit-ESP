@@ -1,4 +1,3 @@
-#if CONFIG_IDF_TARGET_ESP32
 /**
  * \brief  Multi-precision integer library, ESP-IDF hardware accelerated parts
  *
@@ -21,7 +20,13 @@
  *  limitations under the License.
  *
  */
-
+#if __has_include("esp_idf_version.h")
+#include "esp_idf_version.h"
+#if ESP_IDF_VERSION >= ESP_IDF_VERSION_VAL(4, 0, 0)
+#warning("IDF is 4 or later")
+#include "soc/hwcrypto_periph.h"
+#endif
+#endif
 //#include "soc/hwcrypto_periph.h"
 #include "soc/hwcrypto_reg.h"
 #include "driver/periph_ctrl.h"
@@ -278,4 +283,3 @@ void esp_mpi_mult_mpi_failover_mod_mult_hw_op(const mbedtls_mpi *X, const mbedtl
     start_op(RSA_MULT_START_REG);
 
 }
-#endif
