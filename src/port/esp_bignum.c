@@ -20,6 +20,13 @@
  *  limitations under the License.
  *
  */
+#if __has_include("esp_idf_version.h")
+#include "esp_idf_version.h"
+#if ESP_IDF_VERSION >= ESP_IDF_VERSION_VAL(4, 0, 0)
+#warning("IDF is 4 or later")
+#include "soc/hwcrypto_periph.h"
+#endif
+#endif
 #include <stdio.h>
 #include <string.h>
 #include <malloc.h>
@@ -143,9 +150,6 @@ cleanup:
 
 
 
-
-#ifndef CONFIG_IDF_TARGET_ESP32C3
-
 /* Z = (X * Y) mod M
 
    Not an mbedTLS function
@@ -186,7 +190,6 @@ cleanup:
 
     return ret;
 }
-#endif
 
 #if defined(MBEDTLS_MPI_EXP_MOD_ALT)
 
