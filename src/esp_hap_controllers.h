@@ -27,6 +27,10 @@
 #include <stdint.h>
 #include <stdbool.h>
 
+#ifdef __cplusplus
+extern "C" {
+#endif
+
 #define HAP_MAX_CONTROLLERS 16
 #define HAP_CTRL_ID_LEN		64
 #define ED_KEY_LEN		32
@@ -57,5 +61,8 @@ int hap_controller_save(hap_ctrl_data_t *ctrl_data);
 void hap_controller_remove(hap_ctrl_data_t *ctrl_data);
 hap_ctrl_data_t *hap_get_controller(char *ctrl_id);
 void hap_erase_controller_info();
-
+	
+#ifdef __cplusplus
+}
+#endif
 #endif /* _HAP_CONTROLLERS_H_ */
